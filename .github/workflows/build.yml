@@ -1,0 +1,38 @@
+name: Build Windows EXE
+
+# This workflow runs only when a version tag is pushed (e.g. v1.0, v1.1).
+# It does NOT run on normal commits/pushes -- this avoids triggering
+# an unnecessary build on every small change.
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: windows-latest   # GitHub's free Windows runner
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build EXE
+        run: |
+          pyinstaller --onefile --windowed --name MobileUartAnalyzer main.py
+
+      - name: Upload EXE as release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/MobileUartAnalyzer.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
