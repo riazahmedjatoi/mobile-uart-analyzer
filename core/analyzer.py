@@ -1,15 +1,3 @@
-"""
-core/analyzer.py
-------------------
-Do kaam karta hai:
-  1. run_local_analysis()  -> Log ko fault_patterns.py ke against match karke,
-                               aur boot-loop pattern check karke, ek turant
-                               "quick hint" list deta hai (offline, fast).
-  2. build_ai_prompt()      -> Log ko ek achhe structured prompt mein wrap karta
-                               hai, jise technician khud kisi LLM (Claude/ChatGPT
-                               etc.) ko de kar detailed diagnosis maang sake.
-"""
-
 from .fault_patterns import FAULT_PATTERNS
 from .boot_loop_detector import detect_boot_loop, format_boot_loop_result
 

@@ -1,21 +1,3 @@
-"""
-core/fault_patterns.py
-------------------------
-Known UART log keywords/patterns ki list -- inse hum bina kisi AI/internet ke
-turant ek "quick hint" de sakte hain ki log mein kya dikh raha hai.
-
-IMPORTANT: Ye ek starting list hai. Jaise-jaise aap (ya aapka bhai) real boards
-pe test karoge, is list mein naye patterns add karte jao. Yehi is file ka
-sabse bada fayda hai -- knowledge yahan collect hoti rahegi.
-
-Format: har entry ek dict hai:
-    {
-        "keyword": "log mein dhoondne wala text (case-insensitive)",
-        "category": "Storage / Power / Bootloader / Connection",
-        "hint": "Technician ke liye chhota sa explanation",
-    }
-"""
-
 FAULT_PATTERNS = [
     # --- Storage (eMMC / UFS) related ---
     {

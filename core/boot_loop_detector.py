@@ -1,32 +1,7 @@
-"""
-core/boot_loop_detector.py
-----------------------------
-Algorithmic boot-loop detection -- kisi fixed keyword pe depend nahi karta.
-
-Idea: Agar phone boot loop mein phasa hai, to UART log mein ek hi group of
-lines baar-baar (identical) repeat hoti hai -- jaise chip kisi stage pe
-atak kar restart ho rahi hai, aur wahi initialization sequence dobara chal
-rahi hai.
-
-Algorithm (sliding window + hashing):
-  1. Log ko lines mein todo, khaali/trivial lines clean karo.
-  2. Alag-alag block-sizes (3 se MAX_BLOCK_SIZE lines tak) try karo.
-  3. Har block-size ke liye, saare possible consecutive-line blocks ka
-     "signature" (tuple of lines) banao aur dictionary mein count karo.
-  4. Jo block sabse zyada baar (>= MIN_REPEATS) aur sabse bada (informative)
-     repeat hota hai, use best match maan lo.
-  5. Trivial blocks (sirf blank lines, ya bahut chhoti lines, ya sirf ek hi
-     subsystem/tag se bana hua chhota block) ko ignore karo taaki
-     false-positives na aayen.
-
-Ye function GUI se independent hai, isliye standalone bhi test ho sakta hai.
-"""
-
 MIN_BLOCK_SIZE = 3
 MAX_BLOCK_SIZE = 15
 MIN_REPEATS = 2
-MIN_MEANINGFUL_LINE_LENGTH = 4  # isse chhoti lines "trivial" maani jayengi
-
+MIN_MEANINGFUL_LINE_LENGTH = 4
 
 def _clean_lines(log_text):
     """Blank aur bohot chhoti (noise) lines hata kar saaf list deta hai,

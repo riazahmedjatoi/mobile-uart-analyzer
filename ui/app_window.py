@@ -1,28 +1,3 @@
-"""
-ui/app_window.py
-------------------
-Poora GUI is file mein hai. customtkinter use kiya hai (modern, dark-theme
-tkinter wrapper). Ye file sirf "display + button clicks" handle karti hai --
-actual hardware/analysis logic core/ folder ki files mein hai.
-
-Layout (responsive, grid-based):
-
-    ┌─────────────────────────────────────────────────────────┐
-    │  HEADER  (title, version, live status dot)               │
-    ├─────────────────────────────────────────────────────────┤
-    │  CONNECTION CARD  (port, baud, model, action buttons)     │
-    ├───────────────────────────┬───────────────────────────────┤
-    │  LIVE LOG CONSOLE (60%)    │  LOCAL ANALYSIS RESULTS (40%)  │
-    │  (grows/shrinks with       │  (grows/shrinks with            │
-    │   window resize)           │   window resize)                 │
-    └───────────────────────────┴───────────────────────────────┘
-    │  FOOTER STATUS BAR                                          │
-    └─────────────────────────────────────────────────────────┘
-
-Grid weights isliye set kiye hain taaki window resize karne par log/results
-panels sahi tarah se stretch/shrink hon (responsive), sirf fixed-size na rahein.
-"""
-
 import tkinter as tk
 from tkinter import messagebox
 
@@ -34,9 +9,6 @@ from core.uart_reader import UartReader, list_available_ports, save_log_to_file
 from core.analyzer import run_local_analysis, format_local_analysis_summary, build_ai_prompt
 
 
-# ---------------------------------------------------------------------------
-# Color palette -- ek jagah define kiya hai taaki consistent theme rahe
-# ---------------------------------------------------------------------------
 COLORS = {
     "bg":            "#0f1117",
     "card":          "#171a23",

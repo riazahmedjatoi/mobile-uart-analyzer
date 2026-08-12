@@ -1,15 +1,3 @@
-"""
-core/uart_reader.py
---------------------
-Ye module hardware (USB-to-UART adapter) se saara kaam handle karta hai:
-  - Available COM ports dhoondna
-  - Serial connection open/close karna
-  - Background thread mein data read karna (taaki GUI freeze na ho)
-
-Is file mein KOI GUI code nahi hai -- isliye ise GUI ke bina bhi
-(command line se) test kiya ja sakta hai.
-"""
-
 import threading
 import time
 from datetime import datetime
