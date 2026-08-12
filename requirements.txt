@@ -1,0 +1,4 @@
+pyserial
+customtkinter
+pyperclip
+Pillow

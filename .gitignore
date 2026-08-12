@@ -1,0 +1,28 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Captured logs (real device data -- privacy ke liye GitHub pe nahi jani chahiye)
+logs/*.txt
+
+# But keep the logs folder itself tracked
+!logs/.gitkeep
+
+# PyInstaller build output
+build/
+dist/
+*.spec
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode/
+.idea/
