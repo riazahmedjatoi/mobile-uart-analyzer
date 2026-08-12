@@ -1,16 +1,16 @@
 name: Build Windows EXE
 
-# This workflow runs only when a version tag is pushed (e.g. v1.0, v1.1).
-# It does NOT run on normal commits/pushes -- this avoids triggering
-# an unnecessary build on every small change.
 on:
   push:
     tags:
       - "v*"
 
+permissions:
+  contents: write
+
 jobs:
   build:
-    runs-on: windows-latest   # GitHub's free Windows runner
+    runs-on: windows-latest
 
     steps:
       - name: Checkout code
