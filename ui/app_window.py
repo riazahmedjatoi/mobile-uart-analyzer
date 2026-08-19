@@ -27,8 +27,9 @@ import pyperclip
 
 import config
 from core.uart_reader import UartReader, list_available_ports, save_log_to_file
-from core.analyzer import run_local_analysis, format_local_analysis_summary, build_ai_prompt
-
+from core.analyzer import (run_local_analysis, format_local_analysis_summary,
+                            build_ai_prompt, get_voltage_rail_summary,
+                            get_qualcomm_sbl_summary)
 
 COLORS = {
     "bg":            "#0f1117",
@@ -329,13 +330,15 @@ class AppWindow(ctk.CTk):
         self._run_local_analysis()
 
     def _run_local_analysis(self):
+        model = self.model_entry.get().strip()
         findings = run_local_analysis(self.current_log_text)
-        summary = format_local_analysis_summary(findings)
+        voltage_summary = get_voltage_rail_summary(self.current_log_text, phone_model=model)
+        sbl_summary = get_qualcomm_sbl_summary(self.current_log_text)
+        summary = format_local_analysis_summary(findings, voltage_summary + sbl_summary)
 
         self.result_box.delete("1.0", "end")
         self.result_box.insert("1.0", summary)
 
-        model = self.model_entry.get().strip()
         self.last_ai_prompt = build_ai_prompt(self.current_log_text, phone_model=model,
                                                local_findings=findings)
 

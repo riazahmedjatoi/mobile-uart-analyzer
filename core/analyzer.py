@@ -1,8 +1,29 @@
+"""
+core/analyzer.py
+------------------
+Multiple cheezein karta hai:
+  1. run_local_analysis()      -> Log ko fault_patterns.py ke against match
+                                   karke, aur boot-loop check karke, ek turant
+                                   "quick hint" list deta hai (offline, fast).
+  2. get_voltage_rail_summary() -> Memory/storage fault mile to voltage-rail
+                                    checklist deta hai (multimeter se check
+                                    karne layak).
+  3. get_qualcomm_sbl_summary() -> Agar log Qualcomm SBL format ka hai, to
+                                    firmware ke apne log-structure se exact
+                                    stuck-stage aur error-code decode karta hai.
+  4. build_ai_prompt()          -> Log ko ek achhe structured prompt mein wrap
+                                    karta hai, jise technician khud kisi LLM
+                                    (Claude/ChatGPT etc.) ko de kar detailed
+                                    diagnosis maang sake.
+"""
+
 from .fault_patterns import FAULT_PATTERNS
 from .boot_loop_detector import detect_boot_loop, format_boot_loop_result
+from .voltage_rails import get_voltage_checklist, format_voltage_checklist
+from .qualcomm_sbl_parser import parse_qualcomm_sbl_log, format_qualcomm_sbl_result
 
 
-def run_local_analysis(log_text):
+def run_local_analysis(log_text, phone_model=""):
     """
     Do cheezein karta hai:
       1. Known keywords dhoondta hai (fault_patterns.py se) -- fixed signatures.
@@ -51,16 +72,39 @@ def run_local_analysis(log_text):
     return results
 
 
-def format_local_analysis_summary(results):
+def get_voltage_rail_summary(log_text, phone_model=""):
+    """
+    Wrapper jo voltage_rails.py se checklist nikaal kar readable text deta hai.
+    Agar koi memory/storage fault na mile to empty string return hota hai.
+    """
+    checklist = get_voltage_checklist(log_text, phone_model=phone_model)
+    return format_voltage_checklist(checklist)
+
+
+def get_qualcomm_sbl_summary(log_text):
+    """
+    Wrapper jo qualcomm_sbl_parser.py se structured firmware-level analysis
+    nikaal kar readable text deta hai. Agar log Qualcomm SBL format ka nahi
+    hai (jaise MediaTek log), to empty string return hota hai -- koi
+    false-positive nahi aayega.
+    """
+    result = parse_qualcomm_sbl_log(log_text)
+    return format_qualcomm_sbl_result(result)
+
+
+def format_local_analysis_summary(results, voltage_summary=""):
     """
     run_local_analysis() ka output ek readable text mein convert karta hai,
-    UI mein dikhane ke liye.
+    UI mein dikhane ke liye. Agar voltage_summary diya jaye (ya kisi aur
+    extra summary text ka combined string), use bhi end mein append kar
+    deta hai.
     """
     if not results:
-        return ("Koi known fault-pattern match nahi hua. Iska matlab ye nahi "
+        base = ("Koi known fault-pattern match nahi hua. Iska matlab ye nahi "
                 "ki phone theek hai -- ho sakta hai fault UART log mein "
                 "dikhta hi na ho. Neeche 'Copy for AI' button se poora log "
                 "kisi AI ko de kar detailed analysis karwao.")
+        return base + voltage_summary
 
     lines = ["Local Quick-Check Results:\n"]
     for r in results:
@@ -71,7 +115,8 @@ def format_local_analysis_summary(results):
             lines.append(f"     {ml}")
         lines.append("")
 
-    return "\n".join(lines)
+    summary = "\n".join(lines)
+    return summary + voltage_summary
 
 
 def build_ai_prompt(log_text, phone_model="", local_findings=None):
